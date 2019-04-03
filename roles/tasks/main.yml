@@ -1,4 +1,17 @@
 ---
+- name: run multi command
+  shell: "{{item}}"
+  with_items:
+      - echo '/* Connect host {{mysql_host}} */' >> {{phpmyadmin_conf_file}}
+      - echo  '$i++;' >> {{phpmyadmin_conf_file}}
+      - echo '$cfg['Servers'][$i]['auth_type'] = 'cookie';' >> {{phpmyadmin_conf_file}}
+      - echo '$cfg['Servers'][$i]['host'] = '{{mysql_host}}';' >> {{phpmyadmin_conf_file}}
+      - echo '$cfg['Servers'][$i]['compress'] = false;' >> {{phpmyadmin_conf_file}}
+      - echo '$cfg['Servers'][$i]['AllowNoPassword'] = false;' >> {{phpmyadmin_conf_file}}
+      - echo '/*End config host  {{mysql_host}} */' >> {{phpmyadmin_conf_file}}
+      - echo '   '  >> {{phpmyadmin_conf_file}}
+  when: add_confi_mysql == "trust"
+
 - block:
   - name: "Checking folders"
     stat:
@@ -31,8 +44,26 @@
     src: config.inc.php
     dest: "{{ phpmyadmin_conf_path }}"
     mode: 0644
-- name:  phpmyadmin nginx is configured.
-  template:
-    src: phpmyadmin.conf
-    dest: "/etc/nginx/conf.d/"
-    mode: 0644
+- name: add server mysql
+  #lineinfile:
+  #  dest: /usr/share/phpmyadmin/config.inc.php
+  #  line: '{{ item }}'
+  #  insertbefore: 'add server'
+  #with_items: "{{ items_list }}"
+  blockinfile:
+    path: /usr/share/phpmyadmin/config.inc.php
+#    backup: yes
+    #insertafter: 'add server'
+  #  marker: "/* ------------ */"
+    state: present
+    block: "{{ lookup('file', 'localfile.txt') }}"
+#- name:  phpmyadmin nginx is configured.
+#  template:
+#    src: phpmyadmin.conf
+#    dest: "/etc/nginx/conf.d/"
+#    mode: 0644
+
+
+- name: lab thoi
+  shell: echo ' nguyen thanh do  '  >> {{phpmyadmin_conf_file}}
+  when: add_confi_mysql == "false"

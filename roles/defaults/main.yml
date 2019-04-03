@@ -1,3 +1,6 @@
 phpmyadmin_version: 4.8.5
 phpmyadmin_conf_path: /usr/share/phpmyadmin/
 domain_phpmyadmin: sbase-dev-sql.beeketing.com
+phpmyadmin_conf_file: /usr/share/phpmyadmin/config.inc.php
+mysql_host: server14
+add_confi_mysql: "false"

@@ -35,6 +35,8 @@ $cfg['Servers'][$i]['host'] = 'localhost';
 $cfg['Servers'][$i]['compress'] = false;
 $cfg['Servers'][$i]['AllowNoPassword'] = false;
 
+/* add server*/
+
 /**
  * phpMyAdmin configuration storage settings.
  */

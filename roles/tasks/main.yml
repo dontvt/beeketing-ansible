@@ -1,0 +1,38 @@
+---
+- block:
+  - name: "Checking folders"
+    stat:
+     path: "{{item}}"
+    register: folder_stats
+    with_items:
+    - ["{{ phpmyadmin_conf_path }}"]
+  - name: "Creating multiple folders without disturbing previous permissions"
+    file:
+     path: "{{item.item}}"
+     state: directory
+     mode: 0755
+     group: root
+     owner: root
+    when: item.stat.exists == false
+    with_items:
+    - "{{folder_stats.results}}"
+- name : Download the phpmyadmin version {{phpmyadmin_version}}
+  get_url:
+    url: "https://files.phpmyadmin.net/phpMyAdmin/{{phpmyadmin_version}}/phpMyAdmin-{{phpmyadmin_version}}-english.tar.gz"
+    dest: "/tmp/"
+- name: Extract archive
+  unarchive:
+   src: "/tmp/phpMyAdmin-{{phpmyadmin_version}}-english.tar.gz"
+   dest: "{{ phpmyadmin_conf_path }}"
+   remote_src: yes
+   extra_opts: [--strip-components=1]
+- name: Ensure phpmyadmin version {{phpmyadmin_version}} is configured.
+  template:
+    src: config.inc.php
+    dest: "{{ phpmyadmin_conf_path }}"
+    mode: 0644
+- name:  phpmyadmin nginx is configured.
+  template:
+    src: phpmyadmin.conf
+    dest: "/etc/nginx/conf.d/"
+    mode: 0644

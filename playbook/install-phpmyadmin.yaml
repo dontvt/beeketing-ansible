@@ -1,0 +1,8 @@
+---
+- name: Install phpmyadmin
+  hosts: lab-phpmyadmin
+  gather_facts: yes
+  become: true
+  become_user: root
+  roles:
+    - role: roles

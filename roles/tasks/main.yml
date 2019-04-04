@@ -1,5 +1,5 @@
 ---
-- name: run multi command
+- name: Add Multiple Hosts in phpMyAdmin
   shell: "{{item}}"
   with_items:
       - echo '/* Connect host {{mysql_host}} */' >> {{phpmyadmin_conf_file}}
@@ -10,7 +10,7 @@
       - echo '$cfg['Servers'][$i]['AllowNoPassword'] = false;' >> {{phpmyadmin_conf_file}}
       - echo '/*End config host  {{mysql_host}} */' >> {{phpmyadmin_conf_file}}
       - echo '   '  >> {{phpmyadmin_conf_file}}
-  when: add_confi_mysql == "trust"
+  when: add_config_mysql == "yes"
 
 - block:
   - name: "Checking folders"
@@ -29,41 +29,40 @@
     when: item.stat.exists == false
     with_items:
     - "{{folder_stats.results}}"
+ when: add_config_mysql == "no"
 - name : Download the phpmyadmin version {{phpmyadmin_version}}
   get_url:
     url: "https://files.phpmyadmin.net/phpMyAdmin/{{phpmyadmin_version}}/phpMyAdmin-{{phpmyadmin_version}}-english.tar.gz"
     dest: "/tmp/"
+  when: add_config_mysql == "no"
 - name: Extract archive
   unarchive:
    src: "/tmp/phpMyAdmin-{{phpmyadmin_version}}-english.tar.gz"
    dest: "{{ phpmyadmin_conf_path }}"
    remote_src: yes
    extra_opts: [--strip-components=1]
+  when: add_config_mysql == "no"
 - name: Ensure phpmyadmin version {{phpmyadmin_version}} is configured.
   template:
     src: config.inc.php
     dest: "{{ phpmyadmin_conf_path }}"
     mode: 0644
-- name: add server mysql
+  when: add_config_mysql == "no"
+#- name: add server mysql
   #lineinfile:
   #  dest: /usr/share/phpmyadmin/config.inc.php
   #  line: '{{ item }}'
   #  insertbefore: 'add server'
   #with_items: "{{ items_list }}"
-  blockinfile:
-    path: /usr/share/phpmyadmin/config.inc.php
+  #blockinfile:
+  #  path: /usr/share/phpmyadmin/config.inc.php
 #    backup: yes
     #insertafter: 'add server'
   #  marker: "/* ------------ */"
-    state: present
-    block: "{{ lookup('file', 'localfile.txt') }}"
+#    state: present
+#    block: "{{ lookup('file', 'localfile.txt') }}"
 #- name:  phpmyadmin nginx is configured.
 #  template:
 #    src: phpmyadmin.conf
 #    dest: "/etc/nginx/conf.d/"
 #    mode: 0644
-
-
-- name: lab thoi
-  shell: echo ' nguyen thanh do  '  >> {{phpmyadmin_conf_file}}
-  when: add_confi_mysql == "false"

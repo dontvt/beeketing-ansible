@@ -1,15 +1,11 @@
 ---
-- name: Add Multiple Hosts in phpMyAdmin
-  shell: "{{item}}"
+- name: add line into file
+  lineinfile:
+    path: /usr/share/phpmyadmin/config.inc.php
+    line: "{{item}}"
+    create: yes
   with_items:
-      - echo '/* Connect host {{mysql_host}} */' >> {{phpmyadmin_conf_file}}
-      - echo  '$i++;' >> {{phpmyadmin_conf_file}}
-      - echo '$cfg['Servers'][$i]['auth_type'] = 'cookie';' >> {{phpmyadmin_conf_file}}
-      - echo '$cfg['Servers'][$i]['host'] = '{{mysql_host}}';' >> {{phpmyadmin_conf_file}}
-      - echo '$cfg['Servers'][$i]['compress'] = false;' >> {{phpmyadmin_conf_file}}
-      - echo '$cfg['Servers'][$i]['AllowNoPassword'] = false;' >> {{phpmyadmin_conf_file}}
-      - echo '/*End config host  {{mysql_host}} */' >> {{phpmyadmin_conf_file}}
-      - echo '   '  >> {{phpmyadmin_conf_file}}
+    - "{{literal_line}}"
   when: add_config_mysql == "yes"
 
 - block:
@@ -48,6 +44,12 @@
     dest: "{{ phpmyadmin_conf_path }}"
     mode: 0644
   when: add_config_mysql == "no"
+
+#- name:  phpmyadmin nginx is configured.
+#  template:
+#    src: phpmyadmin.conf
+#    dest: "/etc/nginx/conf.d/"
+#    mode: 0644
 #- name: add server mysql
   #lineinfile:
   #  dest: /usr/share/phpmyadmin/config.inc.php
@@ -66,3 +68,16 @@
 #    src: phpmyadmin.conf
 #    dest: "/etc/nginx/conf.d/"
 #    mode: 0644
+#- name: Add default username and password for MySQL connection.
+#  blockinfile:
+#    path: /usr/share/phpmyadmin/config.inc.php
+#    backup: yes
+#    marker: "/* ------------ */"
+#    block: |
+#      $i++;
+#      $cfg['Servers'][$i]['auth_type'] = 'cookie';
+#      $cfg['Servers'][$i]['verbose'] = '{{mysql_hostname}}';
+#      $cfg['Servers'][$i]['host'] = '{{mysql_host_IP}}';
+#      $cfg['Servers'][$i]['compress'] = false;
+#      $cfg['Servers'][$i]['AllowNoPassword'] = false;
+#  when: add_config_mysql == "yes"

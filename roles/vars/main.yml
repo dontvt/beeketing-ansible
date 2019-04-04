@@ -1,3 +1,7 @@
-items_list:
-      - server01
-      - server02
+literal_line: |
+      $i++;
+      $cfg['Servers'][$i]['auth_type'] = 'cookie';
+      $cfg['Servers'][$i]['verbose'] = '{{mysql_hostname}}';
+      $cfg['Servers'][$i]['host'] = '{{mysql_host_IP}}';
+      $cfg['Servers'][$i]['compress'] = false;
+      $cfg['Servers'][$i]['AllowNoPassword'] = false;

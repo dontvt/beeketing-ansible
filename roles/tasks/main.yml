@@ -29,7 +29,7 @@
     when: item.stat.exists == false
     with_items:
     - "{{folder_stats.results}}"
- when: add_config_mysql == "no"
+    when: add_config_mysql == "no"
 - name : Download the phpmyadmin version {{phpmyadmin_version}}
   get_url:
     url: "https://files.phpmyadmin.net/phpMyAdmin/{{phpmyadmin_version}}/phpMyAdmin-{{phpmyadmin_version}}-english.tar.gz"

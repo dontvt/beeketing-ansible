@@ -3,6 +3,7 @@
   lineinfile:
     path: /usr/share/phpmyadmin/config.inc.php
     line: "{{item}}"
+    backup: yes
     create: yes
   with_items:
     - "{{literal_line}}"
